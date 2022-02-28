@@ -1,0 +1,300 @@
+<html>
+<head>
+    <title>Sécheresse</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <link href="default.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="fonts.css" rel="stylesheet" type="text/css" media="all" />
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" type="text/css">
+    <link rel="stylesheet" href="leaflet.css" />
+    <script src="leaflet.js"></script>
+    <script src="maroc.geojson"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="leaflet.legend.css" />
+    <script type="text/javascript" src="leaflet.legend.js"></script>
+        
+        <script src="feature-legend.js"></script>
+    <link rel="stylesheet" href="feature-legend.css">
+
+    </head>
+
+    <style>
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .info {
+            padding: 7px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: black;
+            background: rgba(240,240,240,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.6);
+            border-radius: 5px;
+        }
+        .info h4 {
+            margin: 0 0 5px;
+            color: #252525;
+        }
+        .legend i { 
+        width: 65px; 
+        height: 16px; 
+        float: left; 
+        margin-right: 8px; 
+        opacity: 0.7; 
+        }
+        body{ background-color: #f7f1ee;}
+        h1{
+            text-align: center;
+            text-size-adjust: 20px;
+            border: solid ;
+            color: #3471f5;
+            
+        }
+        h3{text-align: center;
+            color: #4a9dfb;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            line-height: 0cm;
+        }        
+                                    
+    </style>
+</head>
+<body>
+    
+<div id="wrapper">
+        <div id="mapid" style="width: 100%; height: 100%;"></div>
+        <div class="leaflet-top leaflet-right"><div class="info leaflet-control">
+        <script src="SliderControl.js"></script>
+            <script>
+            var sliderControl = null;
+                var mymap = L.map('mapid').setView([29, -6], 5);
+               
+                L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+           attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.',
+           maxZoom: 11,
+           minZoom: 2
+         }).addTo(mymap);
+
+        // get color depending on COVID contaminations value 
+            function getColor(attribut) { return attribut == "secheresse extreme" ? '#fe9929' :
+                                attribut == "sechresse sevère" ? '#fee391' :
+                                attribut == "sechresse modérée" ? '#ffffcc' :
+                                attribut == "normale" ? '#7fcdbb' :
+                                attribut == "modérement humide" ?  '#1d91c0':
+                                attribut == "severement humide" ? '#225ea8':
+                                                                  '#0c2c84';
+
+    }
+
+           
+
+                 
+
+                function style12(feature) {
+                    return {
+                        weight: 1,
+                        opacity: 0.5,
+                        color: 'black',
+                        dashArray: '4',
+                        fillOpacity: 0.7,
+                        fillColor: getColor(feature.properties.web_sechresse3)
+                    };
+                }    
+
+                function style11(feature) {
+                    return {
+                        weight: 1,
+                        opacity: 0.5,
+                        color: 'black',
+                        dashArray: '4',
+                        fillOpacity: 0.7,
+                        fillColor: getColor(feature.properties.web_sechresse2)
+                    };
+                }    
+
+                function style10(feature) {
+                    return {
+                        weight: 1,
+                        opacity: 0.5,
+                        color: 'black',
+                        dashArray: '4',
+                        fillOpacity: 0.7,
+                        fillColor: getColor(feature.properties.web_sechresse1)
+                    };
+                }        
+
+                function highlightFeature(t) {
+                    var layer = t.target;
+
+                    layer.setStyle({
+                        weight: 6,
+                        color: '#22222d',
+                        dashArray: '',
+                        fillOpacity: 1
+                    });
+
+                    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                        layer.bringToFront();
+                    }
+                        info.update(layer.feature.properties);
+
+                } 
+
+                var geojson10;
+
+                function resetHighlight10(e) {
+                    geojson10.resetStyle(e.target);
+                    info.update();
+    
+                }
+                
+                var geojson11;
+
+                function resetHighlight11(e) {
+                    geojson11.resetStyle(e.target);
+                    info.update();            
+                }
+                
+                var geojson12;
+
+                function resetHighlight12(e) {
+                    geojson12.resetStyle(e.target);
+                    info.update();       
+                }
+                
+                function zoomToFeature(e) {
+                    mymap.fitBounds(e.target.getBounds());
+                }
+                function onEachFeature10(feature, layer) {
+                    layer.on({
+                        mouseover: highlightFeature,
+                        mouseout: resetHighlight10,
+                        click: zoomToFeature
+                    });
+                }   
+
+                function onEachFeature11(feature, layer) {
+                    layer.on({
+                        mouseover: highlightFeature,
+                        mouseout: resetHighlight11,
+                        click: zoomToFeature
+                    });
+                } 
+
+                function onEachFeature12(feature, layer) {
+                    layer.on({
+                        mouseover: highlightFeature,
+                        mouseout: resetHighlight12,
+                        click: zoomToFeature
+                    });
+                }
+               
+
+
+                geojson10 = L.geoJson(maroc,{style: style10, onEachFeature: onEachFeature10, time: "web_sechresse1"
+                        }
+                );
+                geojson11 = L.geoJson(maroc,{style: style11, onEachFeature: onEachFeature11, time: "web_sechresse2"
+                        }
+                );
+                geojson12 = L.geoJson(maroc,{style: style12, onEachFeature: onEachFeature12, time: "web_sechresse3"
+                        }
+                );
+                
+            
+                layerGroup = L.layerGroup([geojson10,geojson11, geojson12]);
+                var sliderControl = L.control.sliderControl({layer:layerGroup, follow: true});
+                mymap.addControl(sliderControl);
+                sliderControl.startSlider();
+
+                var info = L.control();
+
+                info.onAdd = function (map) {
+                    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+                    this.update();
+                    return this._div;
+                };
+                let sliderVal, sechInfo
+
+                info.update = function (props) {
+                    sliderVal = document.getElementsByClassName("ui-slider-handle")[0].style.left
+                    if (sliderVal == "0%") {
+                        sechInfo = "web_sechresse1"
+                    }else if (sliderVal == "50%") {
+                        sechInfo = "web_sechresse2"
+                    } else {
+                        sechInfo = "web_sechresse3" 
+                    }
+                  this._div.innerHTML = '<h4>La séchresse dans les régions du Maroc</h4>' +  (props ?
+                        'Région  : <b>' + props.Nom_Region +'</b> <br />  <b>' + props[sechInfo] 
+                        : 'Mettez le curseur sur la région pour explorer') ;
+                };
+
+                info.addTo(mymap);
+                 // légende 
+                  const legend = L.control.Legend({
+            position: "bottomright",
+            collapsed: false,
+            symbolWidth: 24,
+            opacity: 0.9,
+            column: 1,
+            legends: [{
+                label: "Sécheresse extreme",
+                type: "polygon",
+                sides: 4,
+                color: "black",
+                fillColor: '#fe9929',
+                weight: 0.5
+            }, {
+                label: "Sécheresse sevère",
+                type: "polygon",
+                sides: 4,
+                color: "black",
+                fillColor: '#fee391',
+                weight: 0.5
+            }, {
+                label: "Sécheresse modérée",
+                type: "polygon",
+                sides: 4,
+                color: "black",
+                fillColor: '#ffffcc',
+                weight: 0.5
+            },{
+                label: "Normale",
+                type: "polygon",
+                sides: 4,
+                color: "black",
+                fillColor: '#7fcdbb',
+                weight: 0.5
+            },{
+                label: "Modérément humide",
+                type: "polygon",
+                sides: 4,
+                color: "black",
+                fillColor: '#1d91c0',
+                weight: 0.5
+             },{
+                label: "Sevèrement humide",
+                type: "polygon",
+                sides: 4,
+                color: "black",
+                fillColor: '#225ea8',
+                weight: 0.5
+            },{
+                label: "Extremement humide",
+                type: "polygon",
+                sides: 4,
+                color: "black",
+                fillColor: '#0c2c84',
+                weight: 0.5
+            }]
+        })
+        .addTo(mymap);
+            </script>
+
+</body>
+</html>
+                                 

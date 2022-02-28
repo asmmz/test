@@ -1,0 +1,145 @@
+<!--
+
+To run this demo, you need to replace 'YOUR_API_KEY' with an API key from the ArcGIS Developer dashboard.
+
+Sign up for a free account and get an API key.
+
+https://developers.arcgis.com/documentation/mapping-apis-and-services/get-started/
+
+ -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Requette</title>
+
+    <!-- Load Leaflet from CDN -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""
+    ></script>
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@3.0.4/dist/esri-leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet-vector@3.0.0/dist/esri-leaflet-vector.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        color: #323232;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+
+    <script>
+
+      const apiKey = "AAPK4c6b754bff8045789d4ca3013baa5780MYGK5y8TJ7mghbOFkDORlTW_16i0tus6v6jVJUC3_4vT7Fqm1nz1BciXqBOUfGpk";
+      const basemapEnum = "ArcGIS:Streets";
+
+      const map = L.map("map", {
+        minZoom: 2
+      }).setView([27, -4], 5);
+
+      L.esri.Vector.vectorBasemapLayer(basemapEnum, {
+        apiKey: apiKey
+      }).addTo(map);
+
+
+
+      // Create the select dropdown and add to the top-right of the map
+      L.Control.QueryControl = L.Control.extend({
+        onAdd: function (map) {
+          // Array of query where clauses
+          const whereClauses = [
+            "Pour l'année 2019, choisir la région où les précipitations sont: ",
+            "prec > 600",
+             "prec > 400",
+              "prec > 200",
+               "prec > 100",
+                "prec > 50",
+              
+            
+          ];
+          // Create select
+          const select = L.DomUtil.create("select", "");
+          select.setAttribute("id", "whereClauseSelect");
+          select.setAttribute("style", "font-size: 16px;padding:4px 8px;");
+          whereClauses.forEach(function (whereClause) {
+            let option = L.DomUtil.create("option");
+            option.innerHTML = whereClause;
+            select.appendChild(option);
+          });
+          return select;
+        },
+
+        onRemove: function (map) {
+          // Nothing to do here
+        }
+      });
+
+      L.control.queryControl = function (opts) {
+        return new L.Control.QueryControl(opts);
+      };
+
+      L.control
+        .queryControl({
+          position: "topright"
+        })
+        .addTo(map);
+
+      // Add the Feature Layer to the map
+      const parcels = L.esri
+        .featureLayer({
+          url: "https://services6.arcgis.com/kQ7N1sp82DuP2ZQE/arcgis/rest/services/reg/FeatureServer/0",
+          simplifyFactor: 0.5,
+          precision: 4,
+          where: "1 = 0",
+          style: function (feature) {
+            // https://leafletjs.com/reference-1.7.1.html#path-option
+            return {
+              opacity: 1.0,
+              weight: 0.5,
+              color: "white",
+              fillColor: "#19A1E6",
+              fillOpacity: 0.5
+            };
+          }
+        })
+        .addTo(map);
+
+      // Setup the Popup
+      parcels.bindPopup(function (layer) {
+        return L.Util.template("<b>Région {region}</b>" + " <br>précipitation: {prec} <br>" + " mm" , layer.feature.properties);
+      });
+
+      // When the selected where clause changes, set the filter on the layer
+      const select = document.getElementById("whereClauseSelect");
+      select.addEventListener("change", () => {
+        if (select.value !== "") {
+          parcels.setWhere(select.value);
+        }
+      });
+
+    </script>
+  </body>
+</html>
